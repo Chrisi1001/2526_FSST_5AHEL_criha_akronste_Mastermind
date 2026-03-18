@@ -1,1 +1,0 @@
-# 2526_FSST_5AHEL_criha_akronste_Mastermind
