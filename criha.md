@@ -2,3 +2,5 @@
 Es liegt ein JavaFX Programm vor, welche folgende Anforderungen erfüllen sollte. Bitte sieh dir die Aufgabenstellung an und löse sie.
 
 Bitte ignoriere die groß- und Kleinschreibung bei der Eingabe der Buchstaben.
+
+Bitte gestalte mir das Spiel noch farblich etwas schöner, damit es auch wirklich ansprechend aussieht.
