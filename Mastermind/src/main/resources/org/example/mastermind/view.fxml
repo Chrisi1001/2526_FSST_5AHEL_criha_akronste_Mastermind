@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="10.0"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.mastermind.HelloController">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Mastermind" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <Label text="Erlaubte Farben: R, G, B, Y, O, P"/>
+
+    <Label fx:id="remainingLabel" text="Verbleibende Versuche: 10"/>
+
+    <TextField fx:id="inputField" promptText="z.B. RGBY"/>
+
+    <Button text="Versuch prüfen" onAction="#onSubmitButtonClick"/>
+
+    <Label fx:id="messageLabel" text="Statusmeldung"/>
+
+    <TextArea fx:id="historyArea" editable="false" prefHeight="250" prefWidth="400"/>
+</VBox>
