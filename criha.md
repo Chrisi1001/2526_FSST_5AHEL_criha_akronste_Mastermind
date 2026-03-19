@@ -15,6 +15,8 @@ Zusatzaufgaben:
 
 Die Kugeln sollen nur mehr per drag and drop in die Löcher gezogen werden können, keine Eingabe mehr.
 
+Cloud Prompt: Die Kugeln sollen nur mehr per drag and drop in die Löcher gezogen werden können, keine Eingabe mehr. Ganz oben werden die möglichen Farben angezeigt, man soll die obigen farben ankilicken können und diese per drag and drop unten in die löcher ziehen. Wenn man unten auf eine Kugel klickt, soll diese gelöscht werden
+
 Ein zusätzlicher Button (Tipp), welcher 1 -2 Farben komplett aus dem System nimmt (die nicht vorkommen)
 
 Anleitung des Spiels zum Aufklappen und zuklappen
