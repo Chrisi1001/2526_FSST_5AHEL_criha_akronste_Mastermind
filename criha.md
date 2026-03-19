@@ -19,4 +19,6 @@ Cloud Prompt: Die Kugeln sollen nur mehr per drag and drop in die Löcher gezoge
 
 Ein zusätzlicher Button (Tipp), welcher 1 -2 Farben komplett aus dem System nimmt (die nicht vorkommen)
 
+Cloud Prompt:Ein zusätzlicher Button (Tipp), welcher eine Auswahl zwischen leichtem und stärkerem Tipp zeigt. Beim leichten Tipp soll eine Farbe, welche nicht verwendet wird entfernt werden. Beim stärkeren Tipp sollen 2 Farben, welche nicht zum Code passen weggenommen werden.
+
 Anleitung des Spiels zum Aufklappen und zuklappen
