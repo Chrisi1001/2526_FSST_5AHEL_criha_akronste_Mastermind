@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -25,7 +24,7 @@
              LINKE SEITE – aufklappbare Anleitung (WebView)
              ══════════════════════════════════════════════════ -->
         <TitledPane fx:id="instructionPane"
-                    text="📖  Spielanleitung"
+                    text="Spielanleitung"
                     expanded="false"
                     prefWidth="280"
                     maxWidth="280"
@@ -57,6 +56,7 @@
                      -fx-border-width: 1.5;
                      -fx-padding: 28;">
 
+            <!-- Titel -->
             <VBox alignment="CENTER" spacing="4">
                 <Label text="MASTERMIND"
                        style="-fx-font-size: 36px;
@@ -70,15 +70,18 @@
                               -fx-letter-spacing: 1;"/>
             </VBox>
 
-            <HBox alignment="CENTER" spacing="10">
-                <Label text="R" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="G" style="-fx-background-color: #22c55e; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="B" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="Y" style="-fx-background-color: #ca8a04; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="O" style="-fx-background-color: #f97316; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="P" style="-fx-background-color: #a855f7; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-            </HBox>
+            <!-- Drag & Drop Farbpalette -->
+            <HBox fx:id="paletteBox"
+                  alignment="CENTER"
+                  spacing="14"
+                  style="-fx-background-color: #0c1a2e;
+                         -fx-background-radius: 14;
+                         -fx-border-color: #1e3a5f;
+                         -fx-border-width: 1;
+                         -fx-border-radius: 14;
+                         -fx-padding: 12 20 12 20;"/>
 
+            <!-- Versuche-Anzeige -->
             <Label fx:id="remainingLabel"
                    text="Verbleibende Versuche: 10"
                    style="-fx-font-size: 15px;
@@ -92,24 +95,9 @@
                           -fx-border-width: 1;
                           -fx-border-radius: 8;"/>
 
+            <!-- Buttons: Prüfen, Neustart, Tipp -->
             <HBox alignment="CENTER" spacing="10">
-                <TextField fx:id="inputField"
-                           promptText="z.B.  R G B Y"
-                           maxWidth="200"
-                           onAction="#onSubmitButtonClick"
-                           style="-fx-font-size: 16px;
-                                  -fx-font-family: 'Courier New';
-                                  -fx-font-weight: bold;
-                                  -fx-background-radius: 10;
-                                  -fx-border-radius: 10;
-                                  -fx-padding: 9 14 9 14;
-                                  -fx-background-color: #1e293b;
-                                  -fx-border-color: #334155;
-                                  -fx-border-width: 1.5;
-                                  -fx-text-fill: #e2e8f0;
-                                  -fx-prompt-text-fill: #475569;"/>
-
-                <Button text="▶  Prüfen"
+                <Button text="Prüfen"
                         onAction="#onSubmitButtonClick"
                         style="-fx-background-color: #1d4ed8;
                                -fx-text-fill: white;
@@ -122,7 +110,7 @@
                                -fx-border-width: 1;
                                -fx-border-radius: 10;"/>
 
-                <Button text="↺  Neustart"
+                <Button text="Neustart"
                         onAction="#onRestartButtonClick"
                         style="-fx-background-color: #15803d;
                                -fx-text-fill: white;
@@ -134,8 +122,66 @@
                                -fx-border-color: #22c55e;
                                -fx-border-width: 1;
                                -fx-border-radius: 10;"/>
+
+                <Button text="Tipp"
+                        onAction="#onHintButtonClick"
+                        style="-fx-background-color: #7c3aed;
+                               -fx-text-fill: white;
+                               -fx-font-size: 14px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 9 20 9 20;
+                               -fx-cursor: hand;
+                               -fx-border-color: #a855f7;
+                               -fx-border-width: 1;
+                               -fx-border-radius: 10;"/>
             </HBox>
 
+            <!-- Tipp-Popup (anfangs versteckt) -->
+            <VBox fx:id="hintPopup"
+                  alignment="CENTER"
+                  spacing="8"
+                  visible="false"
+                  managed="false"
+                  style="-fx-background-color: #1e1b4b;
+                         -fx-background-radius: 12;
+                         -fx-border-color: #7c3aed;
+                         -fx-border-width: 1.5;
+                         -fx-border-radius: 12;
+                         -fx-padding: 14 20 14 20;">
+                <Label text="Welchen Tipp möchtest du?"
+                       style="-fx-font-size: 13px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: #c4b5fd;"/>
+                <HBox alignment="CENTER" spacing="10">
+                    <Button text="Leicht  (1 Farbe ausblenden)"
+                            onAction="#onEasyHintClick"
+                            style="-fx-background-color: #4c1d95;
+                                   -fx-text-fill: #e9d5ff;
+                                   -fx-font-size: 13px;
+                                   -fx-font-weight: bold;
+                                   -fx-background-radius: 8;
+                                   -fx-padding: 7 14 7 14;
+                                   -fx-cursor: hand;
+                                   -fx-border-color: #7c3aed;
+                                   -fx-border-width: 1;
+                                   -fx-border-radius: 8;"/>
+                    <Button text="Stark  (2 Farben ausblenden)"
+                            onAction="#onStrongHintClick"
+                            style="-fx-background-color: #4c1d95;
+                                   -fx-text-fill: #e9d5ff;
+                                   -fx-font-size: 13px;
+                                   -fx-font-weight: bold;
+                                   -fx-background-radius: 8;
+                                   -fx-padding: 7 14 7 14;
+                                   -fx-cursor: hand;
+                                   -fx-border-color: #7c3aed;
+                                   -fx-border-width: 1;
+                                   -fx-border-radius: 8;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Statusmeldung -->
             <Label fx:id="messageLabel"
                    text="Statusmeldung"
                    wrapText="true"
@@ -144,9 +190,11 @@
                           -fx-font-weight: bold;
                           -fx-text-fill: #93c5fd;"/>
 
+            <!-- Trennlinie -->
             <HBox prefHeight="1" maxHeight="1"
                   style="-fx-background-color: #1e293b;"/>
 
+            <!-- Feedback-Legende -->
             <HBox alignment="CENTER" spacing="20">
                 <HBox alignment="CENTER_LEFT" spacing="6">
                     <Label text="●" style="-fx-text-fill: #f8fafc; -fx-font-size: 14px;"/>
@@ -160,6 +208,7 @@
                 </HBox>
             </HBox>
 
+            <!-- Spielbrett -->
             <ScrollPane fitToWidth="true"
                         prefHeight="360"
                         style="-fx-background: transparent;
