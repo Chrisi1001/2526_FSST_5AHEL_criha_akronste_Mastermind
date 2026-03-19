@@ -2,3 +2,11 @@
 Es liegt ein JavaFX Programm vor, welche folgende Anforderungen erfüllen sollte. Bitte sieh dir die Aufgabenstellung an und löse sie.
 
 Bitte ignoriere die groß- und Kleinschreibung bei der Eingabe der Buchstaben.
+
+Bitte gestalte mir das Spiel noch farblich etwas schöner, damit es auch wirklich ansprechend aussieht.
+
+Wenn du dir das Beispielbild aus Wikipedia ansiehst, sieht man, das das Spiel mit bällen gespielt wird, welche in einer gewissen farbe sind. Bitte mache dies bei mir auch so.
+
+Cloud.ai:
+
+Ich habe dir meine Controller und meine view Klasse meines JavaFx programmes gegeben. Bitte gestalte diese etwas schöner. Es geht um das Spiel Mastermind. Zurzeit ist die Darstellung zwar schon okay, aber noch nicht so ansprechend. Bitte mache alles etwas farbiger und ansprechender. Gib mir bitte immer den gesammten Code aus den jeweiligen files.
