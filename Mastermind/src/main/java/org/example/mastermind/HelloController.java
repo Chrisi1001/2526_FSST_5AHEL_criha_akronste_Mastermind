@@ -5,11 +5,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 
 public class HelloController {
@@ -28,7 +33,7 @@ public class HelloController {
 
     private MastermindModel model;
 
-    private final Circle[][] guessCircles = new Circle[10][4];
+    private final Circle[][] guessCircles    = new Circle[10][4];
     private final Circle[][] feedbackCircles = new Circle[10][4];
     private int currentRow = 0;
 
@@ -39,20 +44,18 @@ public class HelloController {
 
     @FXML
     protected void onSubmitButtonClick() {
-        if (model.isGameOver()) {
-            return;
-        }
+        if (model.isGameOver()) return;
 
         String input = inputField.getText();
 
         if (!model.isValidGuess(input)) {
-            setErrorMessage("Ungültige Eingabe! Bitte genau 4 Zeichen aus R, G, B, Y, O, P eingeben.");
+            setErrorMessage("⚠  Ungültige Eingabe! Genau 4 Zeichen aus R, G, B, Y, O, P eingeben.");
             inputField.clear();
             inputField.requestFocus();
             return;
         }
 
-        String guess = input.toUpperCase().replaceAll("\\s+", "");
+        String guess  = input.toUpperCase().replaceAll("\\s+", "");
         String result = model.checkGuess(guess);
 
         fillBoardRow(currentRow, guess, result);
@@ -61,13 +64,13 @@ public class HelloController {
         remainingLabel.setText("Verbleibende Versuche: " + model.getRemainingAttempts());
 
         if (model.isWon()) {
-            setSuccessMessage("Gewonnen! Du hast den geheimen Code erraten.");
+            setSuccessMessage("🎉  Gewonnen! Du hast den geheimen Code erraten!");
             inputField.setDisable(true);
             return;
         }
 
         if (model.isGameOver()) {
-            setErrorMessage("Verloren! Der geheime Code war: " + model.getSecretCode());
+            setErrorMessage("💀  Verloren! Der Code war: " + model.getSecretCode());
             inputField.setDisable(true);
             return;
         }
@@ -82,7 +85,7 @@ public class HelloController {
     }
 
     private void startNewGame() {
-        model = new MastermindModel();
+        model      = new MastermindModel();
         currentRow = 0;
 
         buildEmptyBoard();
@@ -92,23 +95,33 @@ public class HelloController {
         inputField.requestFocus();
 
         remainingLabel.setText("Verbleibende Versuche: " + model.getRemainingAttempts());
-        setInfoMessage("Neues Spiel gestartet! Gib 4 Farben ein: R, G, B, Y, O, P");
+        setInfoMessage("🎮  Neues Spiel! Gib 4 Farben ein: R G B Y O P");
     }
 
     private void buildEmptyBoard() {
         historyBox.getChildren().clear();
 
         for (int row = 0; row < 10; row++) {
-            HBox rowBox = new HBox(18);
+            HBox rowBox = new HBox(16);
             rowBox.setAlignment(Pos.CENTER_LEFT);
-            rowBox.setPadding(new Insets(6, 10, 6, 10));
-            rowBox.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 14;");
+            rowBox.setPadding(new Insets(8, 14, 8, 14));
 
-            Label rowLabel = new Label(String.valueOf(row + 1));
-            rowLabel.setMinWidth(30);
-            rowLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #334155;");
+            String bg = (row % 2 == 0) ? "#1e293b" : "#0f172a";
+            rowBox.setStyle(
+                    "-fx-background-color: " + bg + ";" +
+                            "-fx-background-radius: 12;"
+            );
 
-            HBox guessBox = new HBox(12);
+            Label rowLabel = new Label(String.format("%2d", row + 1));
+            rowLabel.setMinWidth(28);
+            rowLabel.setStyle(
+                    "-fx-font-size: 14px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: #64748b;" +
+                            "-fx-font-family: 'Courier New';"
+            );
+
+            HBox guessBox = new HBox(10);
             guessBox.setAlignment(Pos.CENTER_LEFT);
 
             for (int col = 0; col < 4; col++) {
@@ -116,19 +129,19 @@ public class HelloController {
                 guessCircles[row][col] = circle;
 
                 StackPane peg = new StackPane(circle);
-                peg.setMinSize(44, 44);
+                peg.setMinSize(42, 42);
                 guessBox.getChildren().add(peg);
             }
 
             GridPane feedbackGrid = new GridPane();
-            feedbackGrid.setHgap(6);
-            feedbackGrid.setVgap(6);
+            feedbackGrid.setHgap(5);
+            feedbackGrid.setVgap(5);
             feedbackGrid.setAlignment(Pos.CENTER);
 
             for (int i = 0; i < 4; i++) {
-                Circle smallCircle = createEmptyFeedbackCircle();
-                feedbackCircles[row][i] = smallCircle;
-                feedbackGrid.add(smallCircle, i % 2, i / 2);
+                Circle small = createEmptyFeedbackCircle();
+                feedbackCircles[row][i] = small;
+                feedbackGrid.add(small, i % 2, i / 2);
             }
 
             rowBox.getChildren().addAll(rowLabel, guessBox, feedbackGrid);
@@ -138,98 +151,126 @@ public class HelloController {
 
     private void fillBoardRow(int row, String guess, String result) {
         for (int i = 0; i < 4; i++) {
-            guessCircles[row][i].setFill(colorForGuess(guess.charAt(i)));
-            guessCircles[row][i].setStroke(Color.web("#334155"));
+            Color base = colorForGuess(guess.charAt(i));
+            guessCircles[row][i].setFill(radialGradientFor(base));
+
+            DropShadow glow = new DropShadow();
+            glow.setColor(base.deriveColor(0, 1.0, 1.0, 0.6));
+            glow.setRadius(10);
+            glow.setSpread(0.2);
+            guessCircles[row][i].setEffect(glow);
+            guessCircles[row][i].setStroke(base.brighter());
+            guessCircles[row][i].setStrokeWidth(1.5);
         }
 
-        int exact = countSymbol(result, '●');
+        int exact   = countSymbol(result, '●');
         int partial = countSymbol(result, '○');
 
         for (int i = 0; i < 4; i++) {
             if (i < exact) {
-                feedbackCircles[row][i].setFill(Color.BLACK);
-                feedbackCircles[row][i].setStroke(Color.BLACK);
+                feedbackCircles[row][i].setFill(
+                        radialGradientFor(Color.web("#f8fafc"))
+                );
+                feedbackCircles[row][i].setStroke(Color.web("#ffffff"));
+                feedbackCircles[row][i].setStrokeWidth(1.2);
+
+                DropShadow ds = new DropShadow();
+                ds.setColor(Color.web("#ffffff", 0.5));
+                ds.setRadius(5);
+                feedbackCircles[row][i].setEffect(ds);
+
             } else if (i < exact + partial) {
-                feedbackCircles[row][i].setFill(Color.WHITE);
-                feedbackCircles[row][i].setStroke(Color.BLACK);
+                feedbackCircles[row][i].setFill(Color.web("#475569"));
+                feedbackCircles[row][i].setStroke(Color.web("#94a3b8"));
+                feedbackCircles[row][i].setStrokeWidth(1.2);
+
             } else {
-                feedbackCircles[row][i].setFill(Color.web("#e2e8f0"));
-                feedbackCircles[row][i].setStroke(Color.web("#cbd5e1"));
+                feedbackCircles[row][i].setFill(Color.web("#1e293b"));
+                feedbackCircles[row][i].setStroke(Color.web("#334155"));
+                feedbackCircles[row][i].setStrokeWidth(1.0);
             }
         }
+    }
+
+    private RadialGradient radialGradientFor(Color base) {
+        return new RadialGradient(
+                0, 0,
+                0.35, 0.3,
+                0.65,
+                true,
+                CycleMethod.NO_CYCLE,
+                new Stop(0.0, base.brighter().brighter()),
+                new Stop(0.5, base),
+                new Stop(1.0, base.darker().darker())
+        );
     }
 
     private int countSymbol(String text, char symbol) {
         int count = 0;
         for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == symbol) {
-                count++;
-            }
+            if (text.charAt(i) == symbol) count++;
         }
         return count;
     }
 
     private Circle createEmptyGuessCircle() {
-        Circle circle = new Circle(17);
-        circle.setFill(Color.web("#e2e8f0"));
-        circle.setStroke(Color.web("#94a3b8"));
-        circle.setStrokeWidth(2);
-        return circle;
+        Circle c = new Circle(18);
+        c.setFill(Color.web("#1e293b"));
+        c.setStroke(Color.web("#334155"));
+        c.setStrokeWidth(1.5);
+
+        InnerShadow inner = new InnerShadow();
+        inner.setColor(Color.web("#000000", 0.4));
+        inner.setRadius(6);
+        c.setEffect(inner);
+
+        return c;
     }
 
     private Circle createEmptyFeedbackCircle() {
-        Circle circle = new Circle(6);
-        circle.setFill(Color.web("#e2e8f0"));
-        circle.setStroke(Color.web("#cbd5e1"));
-        circle.setStrokeWidth(1.2);
-        return circle;
+        Circle c = new Circle(6);
+        c.setFill(Color.web("#0f172a"));
+        c.setStroke(Color.web("#1e293b"));
+        c.setStrokeWidth(1.0);
+        return c;
     }
 
-    private Color colorForGuess(char c) {
-        return switch (c) {
+    private Color colorForGuess(char ch) {
+        return switch (ch) {
             case 'R' -> Color.web("#ef4444");
             case 'G' -> Color.web("#22c55e");
             case 'B' -> Color.web("#3b82f6");
             case 'Y' -> Color.web("#facc15");
             case 'O' -> Color.web("#f97316");
-            case 'P' -> Color.web("#ec4899");
-            default -> Color.web("#cbd5e1");
+            case 'P' -> Color.web("#a855f7");
+            default  -> Color.web("#334155");
         };
     }
 
     private void setInfoMessage(String text) {
         messageLabel.setText(text);
         messageLabel.setStyle(
-                "-fx-font-size: 17px;" +
+                "-fx-font-size: 15px;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-text-fill: #1d4ed8;"
+                        "-fx-text-fill: #93c5fd;"
         );
     }
 
     private void setSuccessMessage(String text) {
         messageLabel.setText(text);
         messageLabel.setStyle(
-                "-fx-font-size: 17px;" +
+                "-fx-font-size: 15px;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-text-fill: #16a34a;"
+                        "-fx-text-fill: #4ade80;"
         );
     }
 
     private void setErrorMessage(String text) {
         messageLabel.setText(text);
         messageLabel.setStyle(
-                "-fx-font-size: 17px;" +
+                "-fx-font-size: 15px;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-text-fill: #dc2626;"
-        );
-    }
-
-    private void setWarningMessage(String text) {
-        messageLabel.setText(text);
-        messageLabel.setStyle(
-                "-fx-font-size: 17px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-text-fill: #b45309;"
+                        "-fx-text-fill: #f87171;"
         );
     }
 }
