@@ -4,10 +4,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -19,9 +18,8 @@
             <Insets top="30" right="30" bottom="30" left="30"/>
         </padding>
 
-        <VBox alignment="CENTER" spacing="18.0"
-              prefWidth="680"
-              maxWidth="680"
+        <VBox alignment="CENTER" spacing="14.0"
+              prefWidth="680" maxWidth="680"
               style="-fx-background-color: #0f172a;
                      -fx-background-radius: 20;
                      -fx-border-radius: 20;
@@ -29,72 +27,74 @@
                      -fx-border-width: 1.5;
                      -fx-padding: 28;">
 
-            <!-- Titel-Bereich -->
+            <!-- ── Titel ── -->
             <VBox alignment="CENTER" spacing="4">
                 <Label text="MASTERMIND"
                        style="-fx-font-size: 36px;
                               -fx-font-weight: bold;
                               -fx-text-fill: #e2e8f0;
-                              -fx-font-family: 'Courier New';
-                              -fx-letter-spacing: 6;"/>
-                <Label text="Knacke den geheimen Farbcode!"
-                       style="-fx-font-size: 13px;
-                              -fx-text-fill: #475569;
-                              -fx-letter-spacing: 1;"/>
+                              -fx-font-family: 'Courier New';"/>
+                <Label text="Ziehe Kugeln in die Felder · Klick zum Entfernen"
+                       style="-fx-font-size: 12px;
+                              -fx-text-fill: #475569;"/>
             </VBox>
 
-            <!-- Farbpaletten-Legende -->
-            <HBox alignment="CENTER" spacing="10">
-                <Label text="R" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="G" style="-fx-background-color: #22c55e; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="B" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="Y" style="-fx-background-color: #ca8a04; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="O" style="-fx-background-color: #f97316; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-                <Label text="P" style="-fx-background-color: #a855f7; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 4 10 4 10; -fx-background-radius: 6;"/>
-            </HBox>
+            <!-- ── Farbpalette ── -->
+            <VBox alignment="CENTER" spacing="8"
+                  style="-fx-background-color: #0c1a2e;
+                         -fx-background-radius: 14;
+                         -fx-border-color: #1e3a5f;
+                         -fx-border-width: 1;
+                         -fx-border-radius: 14;
+                         -fx-padding: 14 20 14 20;">
+                <Label text="VERFÜGBARE FARBEN"
+                       style="-fx-font-size: 10px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: #334155;
+                              -fx-font-family: 'Courier New';"/>
+                <HBox fx:id="paletteBox"
+                      alignment="CENTER"
+                      spacing="24"/>
+            </VBox>
 
-            <!-- Versuche-Anzeige -->
-            <Label fx:id="remainingLabel"
-                   text="Verbleibende Versuche: 10"
-                   style="-fx-font-size: 15px;
-                          -fx-font-weight: bold;
-                          -fx-text-fill: #38bdf8;
-                          -fx-font-family: 'Courier New';
-                          -fx-background-color: #0c1a2e;
-                          -fx-background-radius: 8;
-                          -fx-padding: 6 16 6 16;
-                          -fx-border-color: #1e3a5f;
-                          -fx-border-width: 1;
-                          -fx-border-radius: 8;"/>
-
-            <!-- Eingabe-Bereich -->
+            <!-- ── Steuerleiste ── -->
             <HBox alignment="CENTER" spacing="10">
-                <TextField fx:id="inputField"
-                           promptText="z.B.  R G B Y"
-                           maxWidth="200"
-                           onAction="#onSubmitButtonClick"
-                           style="-fx-font-size: 16px;
-                                  -fx-font-family: 'Courier New';
-                                  -fx-font-weight: bold;
-                                  -fx-background-radius: 10;
-                                  -fx-border-radius: 10;
-                                  -fx-padding: 9 14 9 14;
-                                  -fx-background-color: #1e293b;
-                                  -fx-border-color: #334155;
-                                  -fx-border-width: 1.5;
-                                  -fx-text-fill: #e2e8f0;
-                                  -fx-prompt-text-fill: #475569;"/>
+                <Label fx:id="remainingLabel"
+                       text="Verbleibende Versuche: 10"
+                       style="-fx-font-size: 13px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: #38bdf8;
+                              -fx-font-family: 'Courier New';
+                              -fx-background-color: #0c1a2e;
+                              -fx-background-radius: 8;
+                              -fx-padding: 6 14 6 14;
+                              -fx-border-color: #1e3a5f;
+                              -fx-border-width: 1;
+                              -fx-border-radius: 8;"/>
 
                 <Button text="▶  Prüfen"
                         onAction="#onSubmitButtonClick"
                         style="-fx-background-color: #1d4ed8;
                                -fx-text-fill: white;
-                               -fx-font-size: 14px;
+                               -fx-font-size: 13px;
                                -fx-font-weight: bold;
                                -fx-background-radius: 10;
-                               -fx-padding: 9 20 9 20;
+                               -fx-padding: 8 18 8 18;
                                -fx-cursor: hand;
                                -fx-border-color: #3b82f6;
+                               -fx-border-width: 1;
+                               -fx-border-radius: 10;"/>
+
+                <Button text="💡  Tipp"
+                        onAction="#onHintButtonClick"
+                        style="-fx-background-color: #78350f;
+                               -fx-text-fill: #fde68a;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 8 18 8 18;
+                               -fx-cursor: hand;
+                               -fx-border-color: #f59e0b;
                                -fx-border-width: 1;
                                -fx-border-radius: 10;"/>
 
@@ -102,49 +102,140 @@
                         onAction="#onRestartButtonClick"
                         style="-fx-background-color: #15803d;
                                -fx-text-fill: white;
-                               -fx-font-size: 14px;
+                               -fx-font-size: 13px;
                                -fx-font-weight: bold;
                                -fx-background-radius: 10;
-                               -fx-padding: 9 20 9 20;
+                               -fx-padding: 8 18 8 18;
                                -fx-cursor: hand;
                                -fx-border-color: #22c55e;
                                -fx-border-width: 1;
                                -fx-border-radius: 10;"/>
             </HBox>
 
-            <!-- Statusmeldung -->
+            <!-- ── Tipp-Popup (initial versteckt) ── -->
+            <VBox fx:id="hintPopup"
+                  alignment="CENTER"
+                  spacing="10"
+                  visible="false"
+                  managed="false"
+                  style="-fx-background-color: #1c1408;
+                         -fx-background-radius: 14;
+                         -fx-border-color: #f59e0b;
+                         -fx-border-width: 1.5;
+                         -fx-border-radius: 14;
+                         -fx-padding: 16 24 16 24;">
+
+                <Label text="Welchen Tipp möchtest du? (nur einmal pro Spiel!)"
+                       style="-fx-font-size: 13px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: #fde68a;"/>
+
+                <HBox alignment="CENTER" spacing="12">
+
+                    <VBox alignment="CENTER" spacing="6"
+                          style="-fx-background-color: #0f172a;
+                                 -fx-background-radius: 12;
+                                 -fx-border-color: #334155;
+                                 -fx-border-width: 1;
+                                 -fx-border-radius: 12;
+                                 -fx-padding: 12 18 12 18;">
+                        <Label text="💡  Leichter Tipp"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: bold;
+                                      -fx-text-fill: #fbbf24;"/>
+                        <Label text="1 unmögliche Farbe entfernen"
+                               style="-fx-font-size: 11px;
+                                      -fx-text-fill: #64748b;"/>
+                        <Button text="Anwenden"
+                                onAction="#onEasyHintClick"
+                                style="-fx-background-color: #92400e;
+                                       -fx-text-fill: #fde68a;
+                                       -fx-font-size: 12px;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 8;
+                                       -fx-padding: 6 16 6 16;
+                                       -fx-cursor: hand;
+                                       -fx-border-color: #f59e0b;
+                                       -fx-border-width: 1;
+                                       -fx-border-radius: 8;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="6"
+                          style="-fx-background-color: #0f172a;
+                                 -fx-background-radius: 12;
+                                 -fx-border-color: #334155;
+                                 -fx-border-width: 1;
+                                 -fx-border-radius: 12;
+                                 -fx-padding: 12 18 12 18;">
+                        <Label text="🔍  Starker Tipp"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: bold;
+                                      -fx-text-fill: #fb923c;"/>
+                        <Label text="2 unmögliche Farben entfernen"
+                               style="-fx-font-size: 11px;
+                                      -fx-text-fill: #64748b;"/>
+                        <Button text="Anwenden"
+                                onAction="#onStrongHintClick"
+                                style="-fx-background-color: #7c2d12;
+                                       -fx-text-fill: #fed7aa;
+                                       -fx-font-size: 12px;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 8;
+                                       -fx-padding: 6 16 6 16;
+                                       -fx-cursor: hand;
+                                       -fx-border-color: #fb923c;
+                                       -fx-border-width: 1;
+                                       -fx-border-radius: 8;"/>
+                    </VBox>
+
+                </HBox>
+
+                <Button text="✕  Schließen"
+                        onAction="#onHintButtonClick"
+                        style="-fx-background-color: transparent;
+                               -fx-text-fill: #475569;
+                               -fx-font-size: 11px;
+                               -fx-background-radius: 6;
+                               -fx-padding: 4 12 4 12;
+                               -fx-cursor: hand;
+                               -fx-border-color: #1e293b;
+                               -fx-border-width: 1;
+                               -fx-border-radius: 6;"/>
+            </VBox>
+
+            <!-- ── Statusmeldung ── -->
             <Label fx:id="messageLabel"
-                   text="Statusmeldung"
+                   text=""
                    wrapText="true"
                    maxWidth="500"
                    style="-fx-font-size: 14px;
                           -fx-font-weight: bold;
                           -fx-text-fill: #93c5fd;"/>
 
-            <!-- Trennlinie -->
+            <!-- ── Trennlinie ── -->
             <HBox prefHeight="1" maxHeight="1"
                   style="-fx-background-color: #1e293b;"/>
 
-            <!-- Feedback-Legende -->
-            <HBox alignment="CENTER" spacing="20">
+            <!-- ── Feedback-Legende ── -->
+            <HBox alignment="CENTER" spacing="24">
                 <HBox alignment="CENTER_LEFT" spacing="6">
-                    <Label text="●" style="-fx-text-fill: #f8fafc; -fx-font-size: 14px;"/>
+                    <Label text="●" style="-fx-text-fill:#f8fafc;-fx-font-size:14px;"/>
                     <Label text="= richtige Farbe &amp; Position"
-                           style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                           style="-fx-text-fill:#475569;-fx-font-size:11px;"/>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" spacing="6">
-                    <Label text="●" style="-fx-text-fill: #475569; -fx-font-size: 14px;"/>
+                    <Label text="●" style="-fx-text-fill:#475569;-fx-font-size:14px;"/>
                     <Label text="= richtige Farbe, falsche Position"
-                           style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                           style="-fx-text-fill:#475569;-fx-font-size:11px;"/>
                 </HBox>
             </HBox>
 
-            <!-- Spielbrett -->
+            <!-- ── Spielbrett ── -->
             <ScrollPane fitToWidth="true"
                         prefHeight="360"
-                        style="-fx-background: transparent;
-                               -fx-background-color: transparent;
-                               -fx-border-color: transparent;">
+                        style="-fx-background:transparent;
+                               -fx-background-color:transparent;
+                               -fx-border-color:transparent;">
                 <content>
                     <VBox fx:id="historyBox"
                           spacing="6"
