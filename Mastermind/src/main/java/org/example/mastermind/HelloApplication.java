@@ -10,7 +10,7 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 700, 500);
-        stage.setTitle("Mastermind");
+        stage.setTitle("MASTERMIND");
         stage.setScene(scene);
         stage.show();
     }
