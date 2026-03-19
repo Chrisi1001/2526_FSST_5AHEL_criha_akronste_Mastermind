@@ -10,3 +10,11 @@ Wenn du dir das Beispielbild aus Wikipedia ansiehst, sieht man, das das Spiel mi
 Cloud.ai:
 
 Ich habe dir meine Controller und meine view Klasse meines JavaFx programmes gegeben. Bitte gestalte diese etwas schöner. Es geht um das Spiel Mastermind. Zurzeit ist die Darstellung zwar schon okay, aber noch nicht so ansprechend. Bitte mache alles etwas farbiger und ansprechender. Gib mir bitte immer den gesammten Code aus den jeweiligen files.
+
+Zusatzaufgaben:
+
+Die Kugeln sollen nur mehr per drag and drop in die Löcher gezogen werden können, keine Eingabe mehr.
+
+Ein zusätzlicher Button (Tipp), welcher 1 -2 Farben komplett aus dem System nimmt (die nicht vorkommen)
+
+Anleitung des Spiels zum Aufklappen und zuklappen
