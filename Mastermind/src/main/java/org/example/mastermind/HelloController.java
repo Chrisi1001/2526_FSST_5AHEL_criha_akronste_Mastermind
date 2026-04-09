@@ -1,9 +1,11 @@
 package org.example.mastermind;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
@@ -13,45 +15,72 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 public class HelloController {
 
-    @FXML private Label   remainingLabel;
-    @FXML private Label   messageLabel;
-    @FXML private VBox    historyBox;
-    @FXML private HBox    paletteBox;
-    @FXML private VBox    hintPopup;
+    @FXML private Label remainingLabel;
+    @FXML private Label messageLabel;
+    @FXML private VBox historyBox;
+    @FXML private HBox paletteBox;
+    @FXML private VBox hintPopup;
     @FXML private WebView instructionWebView;
 
-    private MastermindModel model;
-    private final char[][]   placedColors    = new char[10][4];
-    private final Circle[][] guessCircles    = new Circle[10][4];
-    private final Circle[][] feedbackCircles = new Circle[10][4];
-    private int     currentRow = 0;
-    private boolean hintUsed   = false;
+    @FXML private Button submitButton;
+    @FXML private Button restartButton;
+    @FXML private Button hintButton;
+    @FXML private Button languageButton;
 
-    private static final char[]   COLOR_KEYS = {'R','G','B','Y','O','P'};
-    private static final String[] COLOR_HEX  = {
-            "#ef4444","#22c55e","#3b82f6","#facc15","#f97316","#a855f7"
+    private MastermindModel model;
+    private final char[][] placedColors = new char[10][4];
+    private final Circle[][] guessCircles = new Circle[10][4];
+    private final Circle[][] feedbackCircles = new Circle[10][4];
+    private int currentRow = 0;
+    private boolean hintUsed = false;
+
+    private static final char[] COLOR_KEYS = {'R', 'G', 'B', 'Y', 'O', 'P'};
+    private static final String[] COLOR_HEX = {
+            "#ef4444", "#22c55e", "#3b82f6", "#facc15", "#f97316", "#a855f7"
     };
 
     private final boolean[] paletteVisible = new boolean[6];
 
-    // ── Einstiegspunkt ─────────────────────────────────────────────
+    private final Properties lang = new Properties();
+    private String currentLanguage = "de";
+
     @FXML
     public void initialize() {
+        loadLanguageFile();
         loadInstructionHtml();
         buildPalette();
         startNewGame();
+        updateLanguage();
     }
 
-    // =========================================================================
-    //  Anleitung (WebView)
-    // =========================================================================
+    private void loadLanguageFile() {
+        try (InputStream in = getClass().getResourceAsStream("/org/example/mastermind/lang.properties")) {
+            if (in == null) {
+                System.out.println("Sprachdatei nicht gefunden: /org/example/mastermind/lang.properties");
+                return;
+            }
+            lang.load(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateLanguage() {
+        submitButton.setText(lang.getProperty(currentLanguage + ".submit", "Submit"));
+        restartButton.setText(lang.getProperty(currentLanguage + ".restart", "Restart"));
+        hintButton.setText(lang.getProperty(currentLanguage + ".hint", "Hint"));
+        languageButton.setText(lang.getProperty(currentLanguage + ".language", "Language"));
+    }
 
     private void loadInstructionHtml() {
         if (instructionWebView == null) return;
@@ -179,19 +208,15 @@ public class HelloController {
         instructionWebView.getEngine().loadContent(html, "text/html");
     }
 
-    // =========================================================================
-    //  Palette aufbauen
-    // =========================================================================
-
     private void buildPalette() {
         paletteBox.getChildren().clear();
         Arrays.fill(paletteVisible, true);
 
         for (int i = 0; i < COLOR_KEYS.length; i++) {
-            final char   key = COLOR_KEYS[i];
+            final char key = COLOR_KEYS[i];
             final String hex = COLOR_HEX[i];
-            final Color  col = Color.web(hex);
-            final int    idx = i;
+            final Color col = Color.web(hex);
+            final int idx = i;
 
             Circle circle = new Circle(22);
             circle.setFill(radialGradientFor(col));
@@ -205,8 +230,14 @@ public class HelloController {
             glow.setSpread(0.3);
             circle.setEffect(glow);
 
-            circle.setOnMouseEntered(e -> { circle.setScaleX(1.2); circle.setScaleY(1.2); });
-            circle.setOnMouseExited (e -> { circle.setScaleX(1.0); circle.setScaleY(1.0); });
+            circle.setOnMouseEntered(e -> {
+                circle.setScaleX(1.2);
+                circle.setScaleY(1.2);
+            });
+            circle.setOnMouseExited(e -> {
+                circle.setScaleX(1.0);
+                circle.setScaleY(1.0);
+            });
 
             circle.setOnDragDetected(e -> {
                 if (!paletteVisible[idx]) return;
@@ -229,14 +260,10 @@ public class HelloController {
         }
     }
 
-    // =========================================================================
-    //  Spielstart
-    // =========================================================================
-
     private void startNewGame() {
-        model      = new MastermindModel();
+        model = new MastermindModel();
         currentRow = 0;
-        hintUsed   = false;
+        hintUsed = false;
         for (char[] row : placedColors) Arrays.fill(row, (char) 0);
 
         Arrays.fill(paletteVisible, true);
@@ -258,10 +285,6 @@ public class HelloController {
         startNewGame();
     }
 
-    // =========================================================================
-    //  Reihe prüfen
-    // =========================================================================
-
     @FXML
     protected void onSubmitButtonClick() {
         if (model.isGameOver()) return;
@@ -270,7 +293,10 @@ public class HelloController {
         StringBuilder sb = new StringBuilder();
         for (int col = 0; col < 4; col++) {
             char c = placedColors[currentRow][col];
-            if (c == 0) { setErrorMessage("Bitte alle 4 Felder befüllen!"); return; }
+            if (c == 0) {
+                setErrorMessage("Bitte alle 4 Felder befüllen!");
+                return;
+            }
             sb.append(c);
         }
 
@@ -280,15 +306,17 @@ public class HelloController {
 
         remainingLabel.setText("Verbleibende Versuche: " + model.getRemainingAttempts());
 
-        if (model.isWon())      { setSuccessMessage("Gewonnen! Du hast den Code erraten!"); return; }
-        if (model.isGameOver()) { setErrorMessage("Verloren! Der Code war: " + model.getSecretCode()); return; }
+        if (model.isWon()) {
+            setSuccessMessage("Gewonnen! Du hast den Code erraten!");
+            return;
+        }
+        if (model.isGameOver()) {
+            setErrorMessage("Verloren! Der Code war: " + model.getSecretCode());
+            return;
+        }
 
         setInfoMessage("Ziehe Farben in die Felder — Reihe " + (currentRow + 1));
     }
-
-    // =========================================================================
-    //  Tipp-System
-    // =========================================================================
 
     @FXML
     protected void onHintButtonClick() {
@@ -372,10 +400,6 @@ public class HelloController {
         }
     }
 
-    // =========================================================================
-    //  Board aufbauen
-    // =========================================================================
-
     private void buildEmptyBoard() {
         historyBox.getChildren().clear();
 
@@ -416,18 +440,21 @@ public class HelloController {
                         e.acceptTransferModes(TransferMode.COPY);
                     e.consume();
                 });
+
                 slot.setOnDragEntered(e -> {
                     if (!model.isGameOver() && r == currentRow && e.getDragboard().hasString()) {
                         circle.setStroke(Color.web("#60a5fa"));
                         circle.setStrokeWidth(3);
                     }
                 });
+
                 slot.setOnDragExited(e -> {
                     if (placedColors[r][c] == 0) {
                         circle.setStroke(Color.web("#334155"));
                         circle.setStrokeWidth(1.5);
                     }
                 });
+
                 slot.setOnDragDropped(e -> {
                     Dragboard db = e.getDragboard();
                     if (db.hasString() && r == currentRow && !model.isGameOver()) {
@@ -445,12 +472,14 @@ public class HelloController {
                     }
                     e.consume();
                 });
+
                 slot.setOnMouseClicked(e -> {
                     if (placedColors[r][c] != 0 && r == currentRow && !model.isGameOver()) {
                         placedColors[r][c] = 0;
                         resetGuessCircle(guessCircles[r][c]);
                     }
                 });
+
                 slot.setCursor(Cursor.HAND);
                 guessBox.getChildren().add(slot);
             }
@@ -471,10 +500,6 @@ public class HelloController {
             historyBox.getChildren().add(rowBox);
         }
     }
-
-    // =========================================================================
-    //  Hilfsmethoden
-    // =========================================================================
 
     private void applyColorToCircle(Circle c, char color) {
         Color base = Color.web(hexForChar(color));
@@ -499,7 +524,7 @@ public class HelloController {
     }
 
     private void fillFeedback(int row, String result) {
-        int exact   = countSymbol(result, '●');
+        int exact = countSymbol(result, '●');
         int partial = countSymbol(result, '○');
         for (int i = 0; i < 4; i++) {
             Circle fb = feedbackCircles[row][i];
@@ -525,19 +550,23 @@ public class HelloController {
 
     private int countSymbol(String text, char symbol) {
         int n = 0;
-        for (char c : text.toCharArray()) if (c == symbol) n++;
+        for (char c : text.toCharArray()) {
+            if (c == symbol) n++;
+        }
         return n;
     }
 
     private int indexForChar(char c) {
-        for (int i = 0; i < COLOR_KEYS.length; i++)
+        for (int i = 0; i < COLOR_KEYS.length; i++) {
             if (COLOR_KEYS[i] == c) return i;
+        }
         return -1;
     }
 
     private String hexForChar(char c) {
-        for (int i = 0; i < COLOR_KEYS.length; i++)
+        for (int i = 0; i < COLOR_KEYS.length; i++) {
             if (COLOR_KEYS[i] == c) return COLOR_HEX[i];
+        }
         return "#334155";
     }
 
@@ -584,5 +613,15 @@ public class HelloController {
     private void setErrorMessage(String t) {
         messageLabel.setText(t);
         messageLabel.setStyle("-fx-font-size:14px;-fx-font-weight:bold;-fx-text-fill:#f87171;");
+    }
+
+    @FXML
+    public void onLanguageButtonclick(ActionEvent actionEvent) {
+        if (currentLanguage.equals("de")) {
+            currentLanguage = "en";
+        } else {
+            currentLanguage = "de";
+        }
+        updateLanguage();
     }
 }
